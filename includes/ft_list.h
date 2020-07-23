@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 05:24:33 by val               #+#    #+#             */
-/*   Updated: 2020/07/14 20:14:01 by val              ###   ########.fr       */
+/*   Updated: 2020/07/23 21:05:02 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,24 +34,30 @@ typedef struct	s_room
 	int	vertex;
 	int	*tube_out;
 	int	*weight_out;
-	int	count_tube_out;
+	int	count_tube;
 	int	*tube_in;
-	int	*weight_in;
-	int	count_tube_in;
+	int	*weight_in; //1 - действительное значение веса,  - недействительное значение веса, -1 - приоритетное значение веса.
 }				t_room;
+
+typedef struct	s_path
+{
+	int					count_rooms;
+	int					*rooms;
+	struct s_path		*next;
+}				t_path;
 
 typedef struct	s_list_path
 {
-	int					count_path;
-	int					key_room;
-	struct s_list_path	*next;
+	int		count_path;
+	int		heigth;
+	t_path	*paths;
 }				t_list_path;
 
 typedef	struct	s_storage
 {
 	int			count_ants;
 	int			max_count_path;
-	int			count_room;
+	int			count_rooms;
 	int			key_start;
 	char		*name_start;
 	int			key_end;
@@ -59,11 +65,16 @@ typedef	struct	s_storage
 	int			link;
 	t_list_hesh	*table_hesh;
 	t_room		*head;
+	t_room		*head_non_dead_end;
 	t_room		*head_culc;
 	t_list_path	*path_list;
-	t_list_path	*path_list_condidate;
 }				t_storage;
 
+# define INVALID_TUBE -1
+
+# define ACTUAL_WEIGTH 1
+# define INVALID_WEIGTH __INT_MAX__
+# define PRIORITY_WEIGTH -1
 /*
 **	ft_list
 */

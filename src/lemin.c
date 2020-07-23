@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/14 14:45:06 by val               #+#    #+#             */
-/*   Updated: 2020/07/14 20:14:08 by val              ###   ########.fr       */
+/*   Updated: 2020/07/23 16:29:15 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ int	ft_data_processing(t_storage *st)
 {
 	st->key_start = hesh_get_key(st->name_start, st);
 	st->key_end = hesh_get_key(st->name_end, st);
+	
 	ft_find_dead_end(st->head_culc, st->head_culc + st->key_end, 0);
 	return (ft_data_processing2(st));
 }
