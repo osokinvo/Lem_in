@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 16:28:50 by val               #+#    #+#             */
-/*   Updated: 2020/07/23 21:51:07 by val              ###   ########.fr       */
+/*   Updated: 2020/07/24 12:34:12 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,18 +247,18 @@ void	ft_compare_paths(t_list_path *paths, t_storage *st)
 // path является копией
 int	ft_recurse(t_room *head_culc, t_list_path *paths, t_storage *st)
 {
-	t_path *second_path;
+	t_path	*second_path;
 	t_path	*first_path;
 
 	if (!(head_culc) || !(paths))
 		return (ft_error_in_ft_recurse(NULL, NULL, head_culc, paths));
 	while (++(paths->count_path) <= st->max_count_path)
 	{
-		if (!(second_path = ft_find_path(head_culc, st)))//еще нет
+		if (!(second_path = ft_find_path(head_culc, st)))
 			return (ft_error_in_ft_recurse(NULL, NULL, head_culc, paths));
 		if (ft_is_crossing_paths(second_path, head_culc))
 		{
-			if (!(first_path = ft_find_path_uncrosing(head_culc, st)))// еще нет
+			if (!(first_path = ft_find_path_uncrosing(head_culc, st)))
 			{
 				return (ft_error_in_ft_recurse(NULL, second_path, head_culc, paths));
 			}
@@ -272,7 +272,7 @@ int	ft_recurse(t_room *head_culc, t_list_path *paths, t_storage *st)
 			ft_change_tube_weigth(second_path, head_culc);
 		}
 	}
-	ft_free_head_culc(head_culc);// еще нет
+	ft_free_head(head_culc, st->count_rooms);
 	ft_compare_paths(paths, st);
 	return (EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 05:24:33 by val               #+#    #+#             */
-/*   Updated: 2020/07/23 21:05:02 by val              ###   ########.fr       */
+/*   Updated: 2020/07/24 13:00:29 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void			ft_free_storage(t_storage *storage);
 
 t_storage 	*ft_create_storage(void);
 t_room 		*ft_create_head(t_storage *st);
+void		ft_free_head(t_room *head, int count_rooms);
 void		ft_free_storage(t_storage *st);
 
 t_list_path	*ft_create_list_path(int max_count_path);
@@ -101,5 +102,6 @@ int			hash_get_key(char *name, t_storage *st);
 char		*hash_get_name(int key, t_list_hesh *list);
 void		ft_free_list_hash(t_list_hesh *list);
 
-
+void	ft_free_path(t_path *path);
+void	ft_feee_list_paths(t_list_path *paths);
 #endif
