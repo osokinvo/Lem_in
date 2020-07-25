@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 16:28:50 by val               #+#    #+#             */
-/*   Updated: 2020/07/24 12:34:12 by val              ###   ########.fr       */
+/*   Updated: 2020/07/25 17:52:16 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,30 +26,33 @@ int ft_error_in_ft_recurse(t_path *first_path, t_path *second_path,
 	return (EXIT_FAILURE);
 }
 
-void	ft_change_tube_weigth(t_path *path, t_room *head_culc)
+void	ft_change_room_visited(t_path *path, t_room *head_culc)//изменить
 {
-	int		count_rooms;
-	int		count_tube;
+	int	count_rooms;
+	int	count_tube;
+	int	key_room;
+	int	key_room1;
+	int	key_room2;
 
 	count_rooms = path->count_rooms - 1;
 	while (count_rooms-- > 1)
 	{
-		count_tube = head_culc[path->rooms[count_rooms]].count_tube;
+		key_room = path->rooms[count_rooms];
+		key_room1 = path->rooms[count_rooms - 1];
+		key_room2 = path->rooms[count_rooms + 1];
+		count_tube = head_culc[key_room].count_tube;
 		while (count_tube--)
 		{
-			if (head_culc[path->rooms[count_rooms]].tube_in[count_tube] == path->rooms[count_rooms - 1])
+			if (head_culc[key_room].tube_in[count_tube] == key_room1)
 			{
-				head_culc[path->rooms[count_rooms]].tube_in[count_tube] = INVALID_TUBE;
-				head_culc[path->rooms[count_rooms]].weight_in[count_tube] = INVALID_WEIGTH;
-				head_culc[path->rooms[count_rooms]].weight_out[count_tube] = PRIORITY_WEIGTH;
+				head_culc[key_room].tube_in[count_tube] = INVALID_TUBE;
 			}
-			else if (head_culc[path->rooms[count_rooms]].tube_in[count_tube] == path->rooms[count_rooms + 1])
+			else if (head_culc[key_room].tube_out[count_tube] == key_room2)
 			{
-				head_culc[path->rooms[count_rooms]].tube_out[count_tube] = INVALID_TUBE;
-				head_culc[path->rooms[count_rooms]].weight_in[count_tube] = PRIORITY_WEIGTH;
-				head_culc[path->rooms[count_rooms]].weight_out[count_tube] = INVALID_WEIGTH;
+				head_culc[key_room].tube_out[count_tube] = INVALID_TUBE;
 			}
 		}
+		head_culc[key_room].visited = 1;
 	}
 }
 
@@ -64,7 +67,7 @@ t_room	*ft_head_culc_copy(t_room *head_culc, t_path *first_path, t_storage *st)
 		return (NULL);
 	while (count_rooms--)
 	{
-		if (!(result[count_rooms].tube_in = (int *)malloc(4 * (head_culc[count_rooms].count_tube))))
+		if (!(result[count_rooms].tube_in = (int *)malloc(2 * (head_culc[count_rooms].count_tube))))
 		{
 			while (++count_rooms < st->count_rooms)
 				free(result[count_rooms].tube_in);
@@ -72,20 +75,14 @@ t_room	*ft_head_culc_copy(t_room *head_culc, t_path *first_path, t_storage *st)
 			return (NULL);
 		}
 		count_tube = head_culc[count_rooms].count_tube;
+		result[count_rooms].tube_out = result[count_rooms].tube_in + count_tube;
 		while(count_tube--)
 		{
 			result[count_rooms].tube_in[count_tube] = head_culc[count_rooms].tube_in[count_tube];
-			result[count_rooms].weight_in[count_tube] = head_culc[count_rooms].weight_in[count_tube];
-		}
-		result[count_rooms].tube_out = result[count_rooms].tube_in + head_culc[count_rooms].count_tube;
-		count_tube = head_culc[count_tube].count_tube;
-		while(count_tube--)
-		{
 			result[count_rooms].tube_out[count_tube] = head_culc[count_rooms].tube_out[count_tube];
-			result[count_rooms].weight_out[count_tube] = head_culc[count_rooms].weight_out[count_tube];
 		}
 	}
-	ft_change_tube_weigth(first_path, result);
+	ft_change_room_visited(first_path, result);
 	return (result);
 }
 
@@ -168,17 +165,13 @@ t_list_path	*ft_paths_copy(t_list_path *paths, t_path *new_path)
 int ft_is_crossing_paths(t_path *path, t_room *head_culc)
 {
 	int	counter_rooms;
-	int	count_tube;
+	int	key_room;
 	
 	counter_rooms = path->count_rooms - 1;
 	while (counter_rooms-- > 1)
 	{
-		count_tube = head_culc[path->rooms[counter_rooms]].count_tube;
-		while (count_tube--)
-		{
-			if (head_culc[path->rooms[counter_rooms]].tube_in[count_tube] == path->rooms[counter_rooms - 1])
-				return (1);
-		}
+		if (head_culc[path->rooms[counter_rooms]].visited)
+			return (1);
 	}
 	return (0);
 }
@@ -196,6 +189,7 @@ int		ft_heigth_paths(int	count_ants, int count_paths, t_path	*path)
 		path = path->next;
 	}
 	barrier = 1;
+	heigth_path[0] = __INT_MAX__;
 	while (count_ants > 0)
 		if (barrier < count_paths)
 		{
@@ -234,7 +228,7 @@ void	ft_compare_paths(t_list_path *paths, t_storage *st)
 	{
 		if (st->path_list->heigth > paths->heigth)
 		{
-			ft_feee_list_paths(st->path_list);//еще нет
+			ft_feee_list_paths(st->path_list);
 			st->path_list = paths;
 		}
 		else
@@ -254,11 +248,11 @@ int	ft_recurse(t_room *head_culc, t_list_path *paths, t_storage *st)
 		return (ft_error_in_ft_recurse(NULL, NULL, head_culc, paths));
 	while (++(paths->count_path) <= st->max_count_path)
 	{
-		if (!(second_path = ft_find_path(head_culc, st)))
+		if (!(second_path = ft_find_path(head_culc, st, 0)))
 			return (ft_error_in_ft_recurse(NULL, NULL, head_culc, paths));
 		if (ft_is_crossing_paths(second_path, head_culc))
 		{
-			if (!(first_path = ft_find_path_uncrosing(head_culc, st)))
+			if (!(first_path = ft_find_path(head_culc, st, 1)))
 			{
 				return (ft_error_in_ft_recurse(NULL, second_path, head_culc, paths));
 			}
@@ -266,12 +260,14 @@ int	ft_recurse(t_room *head_culc, t_list_path *paths, t_storage *st)
 			{
 				return (ft_error_in_ft_recurse(first_path, second_path, head_culc, paths));
 			}
-			if (!(second_path = ft_del_crossing(&head_culc, &paths, second_path)))//еще нет
-				return (ft_error_in_ft_recurse(NULL, NULL, head_culc, paths));
-			ft_add_path(paths, second_path);
-			ft_change_tube_weigth(second_path, head_culc);
+			ft_del_crossing(head_culc, paths, second_path);
 		}
-	}
+		else
+		{
+			ft_add_path(paths, second_path);
+			ft_change_room_visited(second_path, head_culc);
+		}
+	}	
 	ft_free_head(head_culc, st->count_rooms);
 	ft_compare_paths(paths, st);
 	return (EXIT_SUCCESS);

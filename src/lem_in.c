@@ -6,26 +6,27 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 06:01:18 by val               #+#    #+#             */
-/*   Updated: 2020/07/14 19:58:08 by val              ###   ########.fr       */
+/*   Updated: 2020/07/25 14:57:40 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
 #include "ft_list.h"
+#include <fcntl.h>
 
 int			ft_set_link(int key1, int key2, t_storage *st)
 {
 	int	count_tube;
 	int	*tube_in;
 
-	count_tube = (st->head[key1]).count_tube_in;
+	count_tube = (st->head[key1]).count_tube;
 	if (count_tube == 0)
 	{
 		if (!(tube_in = (int *)malloc(sizeof(int))))
 		{
 			return (EXIT_FAILURE);
 		}
-		((st->head[key1]).count_tube_in)++;
+		((st->head[key1]).count_tube)++;
 		tube_in[0] = key2;
 		(st->head[key1]).tube_in = tube_in;
 		return (EXIT_SUCCESS);
@@ -36,23 +37,23 @@ int			ft_set_link(int key1, int key2, t_storage *st)
 		if (tube_in[count_tube] == key2)
 			return (EXIT_SUCCESS);
 	}
-	count_tube = (st->head[key1]).count_tube_in + 1;
+	count_tube = (st->head[key1]).count_tube + 1;
 	if (!(tube_in = (int *)malloc(count_tube * sizeof(int))))
 	{
 		return (EXIT_FAILURE);
 	}
-		tube_in[--count_tube] = key2;
+	tube_in[--count_tube] = key2;
 	while (count_tube--)
 	{
 		tube_in[count_tube] = (st->head[key1]).tube_in[count_tube];
 	}
 	free((st->head[key1]).tube_in);
-	((st->head[key1]).count_tube_in)++;
+	((st->head[key1]).count_tube)++;
 	(st->head[key1]).tube_in = tube_in;
 	return (EXIT_SUCCESS);
 }
 
-int			ft_crate_link(char *s, t_storage *st)
+int			ft_create_link(char *s, t_storage *st)
 {
 	int		key1;
 	int		key2;
@@ -101,7 +102,7 @@ t_list_hesh	*ft_is_room(char *s, t_storage *st)
 	int		len;
 	t_list_hesh	*room;
 
-	if (*s && *s == 'L')
+	if (!(*s) && *s == 'L')
 		return (NULL);
 	len = 0;
 	while (s[len] != ' ')
@@ -133,8 +134,9 @@ t_list_hesh	*ft_is_room(char *s, t_storage *st)
 int	ft_read_other(char *s, t_storage *st)
 {
 	t_list_hesh	*room;
+	static int	link;
 
-	if (!(st->link) && (room = ft_is_room(s, st)))
+	if (!(link) && (room = ft_is_room(s, st)))
 	{
 		if (st->key_start == 1)
 		{
@@ -149,11 +151,11 @@ int	ft_read_other(char *s, t_storage *st)
 	}
 	else if (ft_is_link(s, st))
 	{
-		if (st->link == 0)
+		if (link == 0)
 		{
-			st->link = 1;
-			st->count_room = hesh_install_key(0, st->table_hesh);
-			if (st->count_room == 0 || !(st->head = ft_create_head(st->table_hesh)))
+			link = 1;
+			st->count_rooms = hesh_install_key(0, st->table_hesh);
+			if (st->count_rooms == 0 || !(st->head = ft_create_head(st->table_hesh)))
 				return (EXIT_FAILURE);
 		}
 		if (ft_create_link(s, st))
@@ -191,7 +193,7 @@ int	ft_read_comment(char *s, t_storage *st)
 int	ft_read_input(t_storage *st)
 {
 	char	*s;
-	int ret;
+	int 	ret;
 	
 	while ((ret = get_next_line1(1, &s)) > 0)
 	{
@@ -223,17 +225,20 @@ int	main(int argc, char *argv)
 	char	*str_end;
 	int		ret;
 
-	if (argc > 1)
+	if (argc == 2)
 	{
 		if (!(st = ft_create_storage()))
 			return (ft_error(NULL));
-		if (get_next_line1(0, &s) <= 0);
-			return (ft_error(NULL));
-		if (s && *s == '#')
+		if ((st->fd = open(argv[1], O_RDONLY)) == -1  || get_next_line1(st->fd, &s) <= 0)
+			return (ft_error(st));
+		while (s && *s == '#')
 		{
 			ft_read_comment(s, st);
+			free(s);
+			if (get_next_line1(st->fd, &s) <= 0)
+				return (ft_error(st));
 		}
-		else
+		if (*s)
 		{
 			st->count_ants = ft_atoi1(s, str_end, 1);
 			if (*str_end != '\0' || st->count_ants < 0)
@@ -242,7 +247,9 @@ int	main(int argc, char *argv)
 			}
 		}
 		free(s);
-		return (ft_read_input(st));
+		if (ft_read_input(st));
+			return (ft_error(st));
+		return (EXIT_SUCCESS);
 	}
-	return (1);
+	return (EXIT_FAILURE);
 }

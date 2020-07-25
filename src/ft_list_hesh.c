@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 05:25:04 by val               #+#    #+#             */
-/*   Updated: 2020/07/11 08:16:05 by val              ###   ########.fr       */
+/*   Updated: 2020/07/24 18:31:46 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int		hesh_install_key(int key, t_list_hesh *list)
 	return (key);
 }
 
-int	hash_get_key(char *name, t_storage *st)
+int	hesh_get_key(char *name, t_storage *st)
 {
 	t_list_hesh	*list;
 

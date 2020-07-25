@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 05:24:33 by val               #+#    #+#             */
-/*   Updated: 2020/07/24 13:00:29 by val              ###   ########.fr       */
+/*   Updated: 2020/07/25 17:12:54 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,9 @@ typedef struct	s_room
 	int	key;
 	int	vertex;
 	int	*tube_out;
-	int	*weight_out;
 	int	count_tube;
-	int	*tube_in;
-	int	*weight_in; //1 - действительное значение веса,  - недействительное значение веса, -1 - приоритетное значение веса.
+	int	*tube_in; //1 - действительное значение веса,  - недействительное значение веса, -1 - приоритетное значение веса.
+	int	visited;
 }				t_room;
 
 typedef struct	s_path
@@ -59,22 +58,19 @@ typedef	struct	s_storage
 	int			max_count_path;
 	int			count_rooms;
 	int			key_start;
+	int			fd;
 	char		*name_start;
 	int			key_end;
 	char		*name_end;
 	int			link;
 	t_list_hesh	*table_hesh;
 	t_room		*head;
-	t_room		*head_non_dead_end;
-	t_room		*head_culc;
 	t_list_path	*path_list;
 }				t_storage;
 
 # define INVALID_TUBE -1
 
 # define ACTUAL_WEIGTH 1
-# define INVALID_WEIGTH __INT_MAX__
-# define PRIORITY_WEIGTH -1
 /*
 **	ft_list
 */
@@ -92,16 +88,14 @@ t_room 		*ft_create_head(t_storage *st);
 void		ft_free_head(t_room *head, int count_rooms);
 void		ft_free_storage(t_storage *st);
 
-t_list_path	*ft_create_list_path(int max_count_path);
-void		ft_free_list_path(t_list_path *list_path);
+t_list_path	*ft_create_list_path(void);
+void		ft_feee_list_paths(t_list_path *paths);
+void		ft_free_path(t_path *path);
 
 t_list_hesh	*ft_create_list_hesh(char *name, int x, int y, t_storage *st);
 t_list_hesh	*ft_create_list_hesh(char *name, int x, int y, t_storage *st);
 int			hesh_install_key(int key, t_list_hesh *list);
-int			hash_get_key(char *name, t_storage *st);
+int			hesh_get_key(char *name, t_storage *st);
 char		*hash_get_name(int key, t_list_hesh *list);
 void		ft_free_list_hash(t_list_hesh *list);
-
-void	ft_free_path(t_path *path);
-void	ft_feee_list_paths(t_list_path *paths);
 #endif
