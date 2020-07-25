@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 05:23:43 by val               #+#    #+#             */
-/*   Updated: 2020/07/25 17:23:29 by val              ###   ########.fr       */
+/*   Updated: 2020/07/25 22:07:54 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <unistd.h>
 # include "libft.h"
 # include "ft_list.h"
+
+# define SIZE_FILE 1024
 
 int	ft_error(t_storage *st);
 

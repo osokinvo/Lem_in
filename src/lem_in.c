@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 06:01:18 by val               #+#    #+#             */
-/*   Updated: 2020/07/25 14:57:40 by val              ###   ########.fr       */
+/*   Updated: 2020/07/25 22:00:40 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,6 +231,7 @@ int	main(int argc, char *argv)
 			return (ft_error(NULL));
 		if ((st->fd = open(argv[1], O_RDONLY)) == -1  || get_next_line1(st->fd, &s) <= 0)
 			return (ft_error(st));
+		st->file_name = argv[1];
 		while (s && *s == '#')
 		{
 			ft_read_comment(s, st);

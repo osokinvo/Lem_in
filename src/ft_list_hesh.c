@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 05:25:04 by val               #+#    #+#             */
-/*   Updated: 2020/07/24 18:31:46 by val              ###   ########.fr       */
+/*   Updated: 2020/07/25 22:45:29 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,5 +143,18 @@ void	ft_free_list_hash(t_list_hesh *list)
 		ft_free_list_hash(list->next);
 	}
 	free(list->name);
+	free(list);
+}
+
+void	ft_free_list_hash1(t_list_hesh *list)
+{
+	if (list->deep)
+	{
+		ft_free_list_hash(list->deep);
+	}
+	if (list->next)
+	{
+		ft_free_list_hash(list->next);
+	}
 	free(list);
 }

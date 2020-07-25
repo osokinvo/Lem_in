@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 05:24:33 by val               #+#    #+#             */
-/*   Updated: 2020/07/25 17:12:54 by val              ###   ########.fr       */
+/*   Updated: 2020/07/25 22:46:39 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,21 @@ typedef struct	s_list_hesh
 	int					level;
 }				t_list_hesh;
 
+typedef struct	s_room_addition
+{
+	char	*name;
+	int		lem;
+}				t_room_addition;
+
 typedef struct	s_room
 {
-	int	key;
-	int	vertex;
-	int	*tube_out;
-	int	count_tube;
-	int	*tube_in; //1 - действительное значение веса,  - недействительное значение веса, -1 - приоритетное значение веса.
-	int	visited;
+	int				key;
+	int				vertex;
+	int				*tube_out;
+	int				count_tube;
+	int				*tube_in; //1 - действительное значение веса,  - недействительное значение веса, -1 - приоритетное значение веса.
+	int				visited;
+	t_room_addition	*add;
 }				t_room;
 
 typedef struct	s_path
@@ -58,6 +65,7 @@ typedef	struct	s_storage
 	int			max_count_path;
 	int			count_rooms;
 	int			key_start;
+	char		*file_name;
 	int			fd;
 	char		*name_start;
 	int			key_end;
@@ -98,4 +106,5 @@ int			hesh_install_key(int key, t_list_hesh *list);
 int			hesh_get_key(char *name, t_storage *st);
 char		*hash_get_name(int key, t_list_hesh *list);
 void		ft_free_list_hash(t_list_hesh *list);
+void		ft_free_list_hash1(t_list_hesh *list);
 #endif
