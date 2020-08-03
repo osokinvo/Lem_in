@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 05:25:04 by val               #+#    #+#             */
-/*   Updated: 2020/07/25 22:45:29 by val              ###   ########.fr       */
+/*   Updated: 2020/07/26 11:19:00 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ t_list_hesh	*ft_create_list_hesh(char *name, int x, int y, t_storage *st)
 	t_list_hesh *result;
 	t_list_hesh	*list;
 
-	if (!(result = (t_storage *)malloc(sizeof(t_list_hesh))))
+	if (!(result = (t_list_hesh *)malloc(sizeof(t_list_hesh))))
 		return (NULL);
-	result->name = result;
+	result->name = name;
 	result->x = x;
 	result->y = y;
 	result->level = 0;
@@ -70,7 +70,7 @@ t_list_hesh	*ft_create_list_hesh(char *name, int x, int y, t_storage *st)
 					list->deep = result;
 					return (result);
 				}
-				else if ((list->deep->name)[list->level] > name[result->level])
+				else if ((list->deep->name)[list->deep->level] > name[result->level])
 				{
 					result->next = list->deep;
 					list->deep = result;
@@ -91,7 +91,7 @@ int		hesh_install_key(int key, t_list_hesh *list)
 	}
 	list->key = key++;
 	key = hesh_install_key(key, list->deep);
-	key = hash_install_key(key, list->next);
+	key = hesh_install_key(key, list->next);
 	return (key);
 }
 
@@ -123,38 +123,32 @@ int	hesh_get_key(char *name, t_storage *st)
 	return (-1);
 }
 
-char	*hash_get_name(int key, t_list_hesh *list)
+char	*hesh_get_name(int key, t_list_hesh *list)
 {
+	char	*name;
+
 	if (!(list) || list->key > key)
 		return (NULL);
 	if (list->key == key)
 		return (list->name);
-	return (hash_get_name(key, list->deep) || hash_get_name(key, list->next));
+	if ((name = hesh_get_name(key, list->deep)))
+		return (name);
+	if ((name = hesh_get_name(key, list->next)))
+		return (name);
+	return (NULL);
 }
 
-void	ft_free_list_hash(t_list_hesh *list)
+void	ft_free_list_hesh(t_list_hesh *list)
 {
 	if (list->deep)
 	{
-		ft_free_list_hash(list->deep);
+		ft_free_list_hesh(list->deep);
 	}
 	if (list->next)
 	{
-		ft_free_list_hash(list->next);
+		ft_free_list_hesh(list->next);
 	}
 	free(list->name);
 	free(list);
 }
 
-void	ft_free_list_hash1(t_list_hesh *list)
-{
-	if (list->deep)
-	{
-		ft_free_list_hash(list->deep);
-	}
-	if (list->next)
-	{
-		ft_free_list_hash(list->next);
-	}
-	free(list);
-}

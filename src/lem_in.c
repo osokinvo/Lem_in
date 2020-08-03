@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 06:01:18 by val               #+#    #+#             */
-/*   Updated: 2020/07/25 22:00:40 by val              ###   ########.fr       */
+/*   Updated: 2020/07/30 15:58:54 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,12 @@ int			ft_create_link(char *s, t_storage *st)
 	char	*name2;
 
 	name1 = s;
-	dash = ft_is_char('-', s);
+	dash = (char *)ft_is_char('-', s);
 	name2 = dash + 1;
 	*dash = '\0';
-	if ((key1 = hash_get_key(name1, st)) < 0)
+	if ((key1 = hesh_get_key(name1, st)) < 0)
 		return (EXIT_FAILURE);
-	if ((key2 = hash_get_key(name2, st)) < 0)
+	if ((key2 = hesh_get_key(name2, st)) < 0)
 		return (EXIT_FAILURE);
 	if (key1 == key2)
 		return (EXIT_FAILURE);
@@ -77,17 +77,18 @@ int			ft_create_link(char *s, t_storage *st)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
-int			ft_is_link(char *s, t_storage *st)
+
+int			ft_is_link(char *s)
 {
 	char	*dash;
 	
 	if (*s == 'L')
 		return (0);
-	if (!(dash = ft_is_char('-', s)))
+	if (!(dash = (char *)ft_is_char('-', s)))
 		return (0);
 	if (*(dash + 1) == '\0' || *(dash + 1) == 'L' || *(dash + 1) == '#')
 		return (0);
-	if ((dash = ft_is_char('-', dash + 1)))
+	if ((dash = (char *)ft_is_char('-', dash + 1)))
 		return (0);
 	if (ft_is_char(' ', s))
 		return (0);
@@ -102,7 +103,7 @@ t_list_hesh	*ft_is_room(char *s, t_storage *st)
 	int		len;
 	t_list_hesh	*room;
 
-	if (!(*s) && *s == 'L')
+	if (!(*s) || *s == 'L' || !(name = (char *)ft_is_char(' ', s)) || !(ft_is_char(' ', name)))
 		return (NULL);
 	len = 0;
 	while (s[len] != ' ')
@@ -146,16 +147,16 @@ int	ft_read_other(char *s, t_storage *st)
 		else if (st->key_end == 1)
 		{
 			st->name_end = room->name;
-			st->key_start = -1;
+			st->key_end = -1;
 		}
 	}
-	else if (ft_is_link(s, st))
+	else if (ft_is_link(s))
 	{
 		if (link == 0)
 		{
 			link = 1;
 			st->count_rooms = hesh_install_key(0, st->table_hesh);
-			if (st->count_rooms == 0 || !(st->head = ft_create_head(st->table_hesh)))
+			if (st->count_rooms == 0 || !(st->head = ft_create_head(st)))
 				return (EXIT_FAILURE);
 		}
 		if (ft_create_link(s, st))
@@ -194,15 +195,15 @@ int	ft_read_input(t_storage *st)
 {
 	char	*s;
 	int 	ret;
-	
-	while ((ret = get_next_line1(1, &s)) > 0)
+
+	while ((ret = get_next_line1(st->fd, &s)) > 0)
 	{
 		if (s && *s == '#')
 		{
 			if (ft_read_comment(s, st))
 			{
 				free(s);
-				return(ft_error(st));
+				return(EXIT_FAILURE);
 			}
 		}
 		else
@@ -210,7 +211,7 @@ int	ft_read_input(t_storage *st)
 			if (ft_read_other(s, st))
 			{
 				free(s);
-				return(ft_error(st));
+				return(EXIT_FAILURE);
 			}
 		}
 		free (s);
@@ -218,12 +219,11 @@ int	ft_read_input(t_storage *st)
 	return (ft_data_processing(st));
 }
 
-int	main(int argc, char *argv)
+int	main(int argc, char **argv)
 {
 	t_storage *st;
 	char	*s;
 	char	*str_end;
-	int		ret;
 
 	if (argc == 2)
 	{
@@ -241,14 +241,14 @@ int	main(int argc, char *argv)
 		}
 		if (*s)
 		{
-			st->count_ants = ft_atoi1(s, str_end, 1);
+			st->count_ants = ft_atoi1(s, &str_end, 1);
 			if (*str_end != '\0' || st->count_ants < 0)
 			{
 				return (ft_error(st));
 			}
 		}
 		free(s);
-		if (ft_read_input(st));
+		if (ft_read_input(st))
 			return (ft_error(st));
 		return (EXIT_SUCCESS);
 	}

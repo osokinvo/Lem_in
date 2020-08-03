@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/25 16:23:23 by val               #+#    #+#             */
-/*   Updated: 2020/07/25 18:01:22 by val              ###   ########.fr       */
+/*   Updated: 2020/08/03 08:42:39 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,22 @@ t_path	*ft_find_crossing_path(int *counter1, t_list_path *paths, t_path *path)
 	result = paths->paths;
 	while (result)
 	{
-		*counter1 = result->count_rooms;
-		while ((*counter1)--)
+		*counter1 = result->count_rooms - 1;
+		while (--(*counter1) > 0)
 		{
 			key = result->rooms[(*counter1)];
-			counter2 = path->count_rooms;
-			while (counter2--)
+			counter2 = path->count_rooms - 1;
+			while (--counter2)
 			{
 				if (path->rooms[counter2] == key)
+				{
+					ft_putstr("\t\t\t\t");
+					ft_putnbr(key);
+					ft_putchar(' ');
+					ft_putnbr(result->rooms[(*counter1) - 1]);
+					ft_putchar('\n');
 					return (result);
+				}
 			}
 		}
 		result = result->next;
@@ -61,10 +68,39 @@ void	ft_change_room_revisited(t_path *pre_crossing_path, t_room *head_culc)
 			}
 			else if (head_culc[key_room].tube_in[count_tube] == key_room2)
 			{
-				head_culc[key_room].tube_in[count_tube] = key_room2;
+				head_culc[key_room].tube_out[count_tube] = key_room2;
 			}
 		}
-		
+	}
+	count_rooms = pre_crossing_path->count_rooms - 1;
+	key_room = pre_crossing_path->rooms[count_rooms];
+	key_room1 = pre_crossing_path->rooms[count_rooms - 1];
+	count_tube = head_culc[key_room].count_tube;
+	while (count_tube--)
+	{
+		if (head_culc[key_room].tube_out[count_tube] == INVALID_TUBE && head_culc[key_room].tube_in[count_tube] == INVALID_TUBE)
+		{
+			head_culc[key_room].tube_in[count_tube] = key_room1;
+			head_culc[key_room].tube_out[count_tube] = key_room1;
+			count_tube = 0;
+		}
+	}
+	if (count_rooms > 1)
+	{
+		key_room = pre_crossing_path->rooms[0];
+		key_room2 = pre_crossing_path->rooms[1];
+		count_tube = head_culc[key_room].count_tube;
+		while (count_tube--)
+		{
+			if (head_culc[key_room].tube_in[count_tube] == INVALID_TUBE &&
+			head_culc[key_room].tube_out[count_tube] == INVALID_TUBE)
+			{
+				
+				head_culc[key_room].tube_in[count_tube] = key_room2;
+				head_culc[key_room].tube_out[count_tube] = key_room2;
+				return;
+			}
+		}
 	}
 }
 
@@ -100,6 +136,7 @@ void	ft_del_path(t_list_path *paths, t_path *path)
 	}
 	pre_path->next = path->next;
 	path->next = NULL;
+	(paths->count_path)--;
 }
 
 void	ft_del_crossing(t_room *head_culc, t_list_path *paths, t_path *path)
@@ -117,5 +154,5 @@ void	ft_del_crossing(t_room *head_culc, t_list_path *paths, t_path *path)
 	ft_del_tube(head_culc, key_room2, key_room1);
 	ft_del_path(paths, pre_crossing_path);
 	ft_free_path(pre_crossing_path);
-	ft_free_path(pre_crossing_path);
+	ft_free_path(path);
 }

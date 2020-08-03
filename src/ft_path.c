@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 06:12:21 by val               #+#    #+#             */
-/*   Updated: 2020/07/25 15:14:37 by val              ###   ########.fr       */
+/*   Updated: 2020/07/26 10:36:58 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	ft_free_path(t_path *path)
 	free(path);
 }
 
-void	ft_feee_list_paths(t_list_path *paths)
+void	ft_free_list_paths(t_list_path *paths)
 {
 	if (paths->paths)
 		ft_free_path(paths->paths);

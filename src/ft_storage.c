@@ -6,7 +6,7 @@
 /*   By: val <val@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/09 06:03:26 by val               #+#    #+#             */
-/*   Updated: 2020/07/25 17:28:24 by val              ###   ########.fr       */
+/*   Updated: 2020/07/26 19:04:21 by val              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	ft_free_storage(t_storage *st)
 	if (st->head)
 		ft_free_head(st->head, st->count_rooms);
 	if (st->path_list)
-		ft_free_path_list(st->path_list);//еще нет
+		ft_free_list_paths(st->path_list);
 	if (st->table_hesh)
 		ft_free_list_hesh(st->table_hesh);
 	free(st);
